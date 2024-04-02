@@ -1,38 +1,40 @@
 import streamlit as st
-import joblib
-import numpy as np
+import pandas as pd
+from sklearn import datasets
+from sklearn.ensemble import RandomForestClassifier
 
-# Chargement du modèle
-model = joblib.load('iris_model.pkl')
+st.write('''
+# App Simple pour la prévision des fleurs d'Iris
+Cette application prédit la catégorie des fleurs d'Iris
+''')
 
-# Dictionnaire pour mapper les classes prédites aux noms des espèces d'iris
-iris_species = {
-    0: "setosa",
-    1: "versicolor",
-    2: "virginica"
-}
+st.sidebar.header("Les parametres d'entrée")
 
-def main():
-    st.title("Application de Classification Iris")
-    user_input = st.text_input("Entrez les caractéristiques (séparées par des virgules) : ")
-    
-    if st.button("Classe"):
-        if user_input:
-            # Convertir la chaîne d'entrée en une liste de valeurs flottantes
-            user_input_list = [float(x.strip()) for x in user_input.split(',')]
-            
-            # Vérifier que nous avons les quatre attributs nécessaires
-            if len(user_input_list) == 4:
-                # Prédiction avec le modèle
-                prediction = model.predict(np.array([user_input_list]).reshape(1, -1))[0]
-                
-                # Affichage du résultat
-                predicted_species = iris_species.get(prediction, "espèce inconnue")
-                st.write(f"Analyse : C'est un iris de l'espèce {predicted_species}.")
-            else:
-                st.write("Veuillez entrer quatre caractéristiques.")
-        else:
-            st.write("Veuillez entrer des caractéristiques.")
+def user_input():
+    sepal_length=st.sidebar.slider('La longeur du Sepal',4.3,7.9,5.3)
+    sepal_width=st.sidebar.slider('La largeur du Sepal',2.0,4.4,3.3)
+    petal_length=st.sidebar.slider('La longeur du Petal',1.0,6.9,2.3)
+    petal_width=st.sidebar.slider('La largeur du Petal',0.1,2.5,1.3)
+    data={'sepal_length':sepal_length,
+    'sepal_width':sepal_width,
+    'petal_length':petal_length,
+    'petal_width':petal_width
+    }
+    fleur_parametres=pd.DataFrame(data,index=[0])
+    return fleur_parametres
 
-if __name__ == "__main__":
-    main()
+df=user_input()
+
+st.subheader('on veut trouver la catégorie de cette fleur')
+st.write(df)
+
+iris=datasets.load_iris()
+clf=RandomForestClassifier()
+clf.fit(iris.data,iris.target)
+
+prediction=clf.predict(df)
+
+st.subheader("La catégorie de la fleur d'iris est:")
+st.write(iris.target_names[prediction])
+
+
