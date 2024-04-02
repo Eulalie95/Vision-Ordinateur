@@ -1,9 +1,9 @@
 import streamlit as st
-import bentoml
+import joblib
 import numpy as np
 
 # Chargement du modèle
-model = bentoml.sklearn.load_model('iris_model:latest')
+model = joblib.load('iris_model.pkl')
 
 # Dictionnaire pour mapper les classes prédites aux noms des espèces d'iris
 iris_species = {
@@ -24,7 +24,7 @@ def main():
             # Vérifier que nous avons les quatre attributs nécessaires
             if len(user_input_list) == 4:
                 # Prédiction avec le modèle
-                prediction = model.predict(np.array([user_input_list]))[0]
+                prediction = model.predict(np.array([user_input_list]).reshape(1, -1))[0]
                 
                 # Affichage du résultat
                 predicted_species = iris_species.get(prediction, "espèce inconnue")
@@ -36,4 +36,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
