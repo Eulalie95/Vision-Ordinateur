@@ -58,5 +58,5 @@ if source_vid is not None:
                                use_column_width=True
                                )
             else:
-                st.error("Failed to read frame. Exiting...")
+                vid_cap.release()
                 break
