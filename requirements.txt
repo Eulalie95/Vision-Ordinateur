@@ -1,4 +1,4 @@
 pip
 opencv_python_headless
-streamlit== 1.32.2
+streamlit== 1.33.0
 ultralytics==8.1.34
